@@ -134,10 +134,15 @@ having count(distinct ar.comp) = 2;
 
 -- 10. Quali sono le città con almeno due aeroporti?
 
-select distinct l1.citta
-from luogoAeroporto l1, luogoAeroporto l2
-where l1.citta = l2.citta
-    and l1.aeroporto <> l2.aeroporto;
+-- select distinct l1.citta
+-- from luogoAeroporto l1, luogoAeroporto l2
+-- where l1.citta = l2.citta
+--     and l1.aeroporto <> l2.aeroporto;
+
+select citta
+from luogoAeroporto
+group by citta
+having count(distinct aeroporto) >= 2;
 
  citta 
 -------
@@ -153,6 +158,11 @@ where v.comp = c.nome
 group by c.nome
 having avg(v.durataMinuti) > 360;
 
+-- select comp, avg(durataMinuti)
+-- from volo
+-- group by comp
+-- having avg(durataMinuti) > 360;
+
    nome   
 ----------
  Apitalia
@@ -167,6 +177,11 @@ from compagnia c, volo v
 where v.comp = c.nome
 group by c.nome
 having min(v.durataMinuti) > 100;
+
+-- select comp, avg(durataMinuti)
+-- from volo
+-- group by comp
+-- having min(durataMinuti) > 100;
 
    nome   
 ----------
