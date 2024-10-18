@@ -1,15 +1,29 @@
 -- 1. Qual è media e deviazione standard degli stipendi per ogni categoria di strutturati?
---stddev_samp
-SELECT p.posizione, avg(p.stipendio) AS media, stddev_pop(p.stipendio) AS deviazione_standard
+
+SELECT posizione, avg(p.stipendio) AS media, stddev_samp(p.stipendio) AS deviazione_standard
 FROM Persona
-GROUP BY p.posizione
+GROUP BY posizione;
+
+      posizione       |       media        | deviazione_standard 
+----------------------+--------------------+---------------------
+ Professore Ordinario | 39848.667317708336 |   2894.855495562445
+ Professore Associato | 38211.143798828125 |   4359.258153186441
+ Ricercatore          | 40304.271205357145 |   3602.198235119911
+(3 rows)
 
 -- 2. Quali sono i ricercatori (tutti gli attributi) con uno stipendio superiore alla media
 -- della loro categoria?
 
-SELECT *
-FROM Persona
-HAVING p.stipendio > avg(p.stipendio)
+WITH media AS (
+    SELECT posizione, avg(stipendio) as media_stipendio
+    FROM Persona
+    GROUP BY posizione
+)
+
+SELECT p.*, m.media_stipendio
+FROM Persona p, media as m
+WHERE p.stipendio > m.media_stipendio
+    AND p.posizione = m.posizione;
 
 -- 3. Per ogni categoria di strutturati quante sono le persone con uno stipendio che
 -- differisce di al massimo una deviazione standard dalla media della loro categoria?
