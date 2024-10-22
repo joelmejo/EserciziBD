@@ -78,9 +78,39 @@ WHERE p.id = o.id
 
 -- 5. Quali sono i progetti la cui durata è superiore alla media delle durate di tutti i
 -- progetti? Restituire nome dei progetti e loro durata in giorni.
+
+WITH durata_progetti AS (
+    SELECT id, nome, fine - inizio AS durata_giorni
+    FROM Progetto
+),
+
+durata_media AS (
+    SELECT avg(durata_giorni) AS media_durata
+    FROM durata_progetti
+)
+ 
+SELECT dp.nome, dp.durata_giorni
+FROM durata_media dm, durata_progetti dp
+WHERE dp.durata_giorni > dm.media_durata;
+
+    nome     | durata_giorni 
+-------------+---------------
+ WineSharing |          1825
+ Simap       |          1505
+(2 rows)
+
 -- 6. Quali sono i progetti terminati in data odierna che hanno avuto attività di tipo
 -- “Dimostrazione”? Restituire nome di ogni progetto e il numero complessivo delle
 -- ore dedicate a tali attività nel progetto.
+
+WITH prog_term AS (
+    SELECT id
+    FROM Progetto
+    WHERE fine < CURRENT_DATE
+)
+
+SELECT
+
 -- 7. Quali sono i professori ordinari che hanno fatto più assenze per malattia del nu-
 -- mero di assenze medio per malattia dei professori associati? Restituire id, nome e
 -- cognome del professore e il numero di giorni di assenza per malattia.
