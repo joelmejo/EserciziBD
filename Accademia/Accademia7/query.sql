@@ -103,14 +103,45 @@ WHERE dp.durata_giorni > dm.media_durata;
 -- “Dimostrazione”? Restituire nome di ogni progetto e il numero complessivo delle
 -- ore dedicate a tali attività nel progetto.
 
-WITH prog_term AS (
-    SELECT id
-    FROM Progetto
-    WHERE fine < CURRENT_DATE
-)
+SELECT prog.id, prog.nome, sum(ap.oreDurata) AS ore_dimostrazione
+FROM Progetto prog, attivitaProgetto ap
+WHERE prog.id = ap.progetto
+    AND ap.tipo = 'Dimostrazione'
+    AND prog.fine < CURRENT_DATE
+GROUP BY prog.id, prog.nome;
 
-SELECT
+ id |  nome   | ore_dimostrazione 
+----+---------+-------------------
+  1 | Pegasus |                15
+(1 row)
 
 -- 7. Quali sono i professori ordinari che hanno fatto più assenze per malattia del nu-
 -- mero di assenze medio per malattia dei professori associati? Restituire id, nome e
 -- cognome del professore e il numero di giorni di assenza per malattia.
+
+WITH n_assenze_p_asso AS (
+    SELECT a.persona, count(*) AS n_assenze
+    FROM Persona p, Assenza a
+    WHERE p.id = a.persona
+    AND p.posizione = 'Professore Associato'
+    AND a.tipo = 'Malattia'
+    GROUP BY persona
+),
+
+media_assenze_p_asso AS (
+    SELECT avg(n_assenze) AS media
+    FROM n_assenze_p_asso
+)
+ 
+SELECT p.id, p.nome, p.cognome, count(*) AS num_giorni_malattia
+FROM Persona p, Assenza a, media_assenze_p_asso map
+WHERE p.id = a.persona
+    AND p.posizione = 'Professore Ordinario'
+    AND a.tipo = 'Malattia'
+GROUP BY p.id, p.nome, p.cognome, map.media
+HAVING count(*) > map.media;
+
+ id |  nome   | cognome | num_giorni_malattia 
+----+---------+---------+---------------------
+ 10 | Ginevra | Riva    |                   3
+(1 row)
