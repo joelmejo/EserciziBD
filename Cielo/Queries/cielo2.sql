@@ -85,6 +85,14 @@ where ar.partenza = lp.aeroporto
     and lp.nazione <> la.nazione
 group by lp.nazione;
 
+    nazione     | count 
+----------------+-------
+ France         |     1
+ Italy          |     1
+ United Kingdom |     2
+ USA            |     1
+(4 rows)
+
 -- 7. Qual è la durata media dei voli che partono da ognuno degli aeroporti?
 
 select a.codice, a.nome, avg(v.durataMinuti)
@@ -158,11 +166,6 @@ where v.comp = c.nome
 group by c.nome
 having avg(v.durataMinuti) > 360;
 
--- select comp, avg(durataMinuti)
--- from volo
--- group by comp
--- having avg(durataMinuti) > 360;
-
    nome   
 ----------
  Apitalia
@@ -177,11 +180,6 @@ from compagnia c, volo v
 where v.comp = c.nome
 group by c.nome
 having min(v.durataMinuti) > 100;
-
--- select comp, avg(durataMinuti)
--- from volo
--- group by comp
--- having min(durataMinuti) > 100;
 
    nome   
 ----------
